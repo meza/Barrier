@@ -36,6 +36,17 @@ public class CircuitBreakerTest {
 	}
 
 	@Test
+	public void executeResultTest() throws Throwable {
+		RegulatedCommand cmd = getACommandMock();
+		String returnStr = "return";
+		when(cmd.execute()).thenReturn(returnStr);
+
+		Assert.assertSame(returnStr, cb.execute(cmd).result());
+
+		verify(cmd, times(1)).execute();
+	}
+
+	@Test
 	public void testSuccessIsTrue() {
 		RegulatedCommand cmd = getACommandMock();
 		RegulatedResponse rsp = cb.execute(cmd);

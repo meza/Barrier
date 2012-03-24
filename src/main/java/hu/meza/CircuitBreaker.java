@@ -31,15 +31,14 @@ public class CircuitBreaker {
 	private RegulatedResponse handleCommand(RegulatedCommand regulatedCommand) {
 
 		if (currentState == State.CLOSED) {
-			return new RegulatedResponse(false, new CircuitBrokenException());
+			return new RegulatedResponse(null, false, new CircuitBrokenException());
 		}
 
 		try {
-			regulatedCommand.execute();
-			return new RegulatedResponse(true);
+			return new RegulatedResponse(regulatedCommand.execute(), true);
 		} catch (Throwable e) {
 			handleException(e);
-			return new RegulatedResponse(false, e);
+			return new RegulatedResponse(null, false, e);
 		}
 
 	}
