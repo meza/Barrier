@@ -1,11 +1,23 @@
 package hu.meza;
 
-public interface RegulatedResponse {
-	public boolean success();
+public class RegulatedResponse {
+	private boolean success = false;
+	private Throwable error;
 
-	public void succeed(boolean answer);
+	public RegulatedResponse(boolean success, Throwable e) {
+		this.success = success;
+		error = e;
+	}
 
-	public void receivedException(Exception e);
+	public RegulatedResponse(boolean success) {
+		this.success = success;
+	}
 
-	Exception exception();
+	public boolean success() {
+		return success;
+	}
+
+	public Throwable exception() {
+		return error;
+	}
 }

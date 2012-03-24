@@ -1,36 +1,50 @@
 package hu.meza;
 
+import hu.meza.cooldownstrategies.CoolDownStrategy;
 import hu.meza.exceptions.CircuitBrokenException;
 
-import java.net.ConnectException;
-
 public class CircuitBreaker {
-	private enum State {OPEN, CLOSED};
+
+	private CoolDownStrategy coolDownStrategy;
+	private TriggerStrategy triggerStrategy;
+
+	public CircuitBreaker(CoolDownStrategy secondsToCoolDown, TriggerStrategy triggerStrategy) {
+		this.coolDownStrategy = secondsToCoolDown;
+		this.triggerStrategy = triggerStrategy;
+	}
+
+	private enum State {OPEN, CLOSED}
 
 	private State currentState = State.OPEN;
 
 	public RegulatedResponse execute(RegulatedCommand cmd) {
-
-		RegulatedCommand regulatedCommand = cmd;
-		handleCommand(regulatedCommand);
-		return regulatedCommand.response();
+		if (coolDownStrategy.cool()) {
+			currentState = State.OPEN;
+		}
+		return handleCommand(cmd);
 	}
 
-	private void handleCommand(RegulatedCommand regulatedCommand) {
+	private RegulatedResponse handleCommand(RegulatedCommand regulatedCommand) {
+
 		if (currentState == State.CLOSED) {
-			regulatedCommand.response().receivedException(new CircuitBrokenException());
-			return;
+			return new RegulatedResponse(false, new CircuitBrokenException());
 		}
 
 		try {
 			regulatedCommand.execute();
-			regulatedCommand.response().succeed(true);
-		} catch (Exception e) {
-			regulatedCommand.response().succeed(false);
-			if (ConnectException.class == e.getClass()) {
-				currentState = State.CLOSED;
-			}
-			regulatedCommand.response().receivedException(e);
+			return new RegulatedResponse(true);
+		} catch (Throwable e) {
+			handleException(e);
+			return new RegulatedResponse(false, e);
+		}
+
+	}
+
+	private void handleException(Throwable e) {
+		if (triggerStrategy.isBreaker(e)) {
+			coolDownStrategy.trigger();
+			currentState = State.CLOSED;
 		}
 	}
 }
+
