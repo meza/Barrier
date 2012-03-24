@@ -19,9 +19,13 @@ public class CircuitBreaker {
 
 	public RegulatedResponse execute(RegulatedCommand cmd) {
 		if (coolDownStrategy.cool()) {
-			currentState = State.OPEN;
+			open();
 		}
 		return handleCommand(cmd);
+	}
+
+	private synchronized void open() {
+		currentState = State.OPEN;
 	}
 
 	private RegulatedResponse handleCommand(RegulatedCommand regulatedCommand) {
@@ -40,7 +44,7 @@ public class CircuitBreaker {
 
 	}
 
-	private void handleException(Throwable e) {
+	private synchronized void handleException(Throwable e) {
 		if (triggerStrategy.isBreaker(e)) {
 			coolDownStrategy.trigger();
 			currentState = State.CLOSED;
