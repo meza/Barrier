@@ -1,22 +1,22 @@
 package hu.meza;
 
-public class RegulatedResponse {
+public class Response {
 	private boolean success = false;
 	private Throwable error;
 	private Object result;
 
-	public RegulatedResponse(Object result, boolean success, Throwable e) {
+	public Response(Object result, boolean success, Throwable e) {
 		this.result = result;
 		this.success = success;
 		error = e;
 	}
 
-	public RegulatedResponse(Object result, boolean success) {
+	public Response(Object result, boolean success) {
 		this.result = result;
 		this.success = success;
 	}
 
-	public RegulatedResponse(Object result) {
+	public Response(Object result) {
 		this(result, true);
 	}
 

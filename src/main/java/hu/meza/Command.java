@@ -1,5 +1,5 @@
 package hu.meza;
 
-public interface RegulatedCommand {
+public interface Command {
 	public Object execute() throws Throwable;
 }

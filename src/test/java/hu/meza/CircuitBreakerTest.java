@@ -1,6 +1,5 @@
 package hu.meza;
 
-import hu.meza.cooldownstrategies.CoolDownStrategy;
 import hu.meza.exceptions.CircuitBrokenException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,7 +28,7 @@ public class CircuitBreakerTest {
 
 	@Test
 	public void executeTest() throws Throwable {
-		RegulatedCommand cmd = getACommandMock();
+		Command cmd = getACommandMock();
 		cb.execute(cmd);
 
 		verify(cmd, times(1)).execute();
@@ -37,7 +36,7 @@ public class CircuitBreakerTest {
 
 	@Test
 	public void executeResultTest() throws Throwable {
-		RegulatedCommand cmd = getACommandMock();
+		Command cmd = getACommandMock();
 		String returnStr = "return";
 		when(cmd.execute()).thenReturn(returnStr);
 
@@ -48,16 +47,16 @@ public class CircuitBreakerTest {
 
 	@Test
 	public void testSuccessIsTrue() {
-		RegulatedCommand cmd = getACommandMock();
-		RegulatedResponse rsp = cb.execute(cmd);
+		Command cmd = getACommandMock();
+		Response rsp = cb.execute(cmd);
 
 		Assert.assertTrue(rsp.success());
 	}
 
 	@Test
 	public void executeMultipleCommandsTest() throws Throwable {
-		RegulatedCommand cmd = getACommandMock();
-		RegulatedCommand cmd2 = getACommandMock();
+		Command cmd = getACommandMock();
+		Command cmd2 = getACommandMock();
 
 		cb.execute(cmd);
 		cb.execute(cmd2);
@@ -68,10 +67,10 @@ public class CircuitBreakerTest {
 
 	@Test
 	public void executeMultipleCommandsWithErrorsTest() throws Throwable {
-		RegulatedCommand faultyCommand = getACommandMock();
+		Command faultyCommand = getACommandMock();
 		doThrow(new RuntimeException()).when(faultyCommand).execute();
 
-		RegulatedCommand cmd2 = getACommandMock();
+		Command cmd2 = getACommandMock();
 
 		cb.execute(faultyCommand);
 		cb.execute(cmd2);
@@ -85,10 +84,10 @@ public class CircuitBreakerTest {
 
 		RuntimeException toBeThrown = new RuntimeException();
 
-		RegulatedCommand faultyCommand = getACommandMock();
+		Command faultyCommand = getACommandMock();
 		when(faultyCommand.execute()).thenThrow(toBeThrown);
 
-		RegulatedResponse resp = cb.execute(faultyCommand);
+		Response resp = cb.execute(faultyCommand);
 
 		Assert.assertFalse(resp.success());
 		Assert.assertSame(resp.exception(), toBeThrown);
@@ -100,15 +99,15 @@ public class CircuitBreakerTest {
 		when(triggerStrategy.isBreaker(toBeThrown)).thenReturn(true);
 
 
-		RegulatedCommand faultyCommand = getACommandMock();
+		Command faultyCommand = getACommandMock();
 		when(faultyCommand.execute()).thenThrow(toBeThrown);
 
-		RegulatedCommand cmd1 = getACommandMock();
-		RegulatedCommand cmd2 = getACommandMock();
+		Command cmd1 = getACommandMock();
+		Command cmd2 = getACommandMock();
 
-		RegulatedResponse resp = cb.execute(faultyCommand);
-		RegulatedResponse resp1 = cb.execute(cmd1);
-		RegulatedResponse resp2 = cb.execute(cmd2);
+		Response resp = cb.execute(faultyCommand);
+		Response resp1 = cb.execute(cmd1);
+		Response resp2 = cb.execute(cmd2);
 
 		Assert.assertFalse(resp.success());
 		Assert.assertNotNull(resp.exception());
@@ -130,11 +129,11 @@ public class CircuitBreakerTest {
 		ConnectException toBeThrown = new ConnectException();
 		when(triggerStrategy.isBreaker(toBeThrown)).thenReturn(true);
 
-		RegulatedCommand faultyCommand = getACommandMock();
+		Command faultyCommand = getACommandMock();
 		when(faultyCommand.execute()).thenThrow(toBeThrown);
 
-		RegulatedCommand cmd1 = getACommandMock();
-		RegulatedCommand cmd2 = getACommandMock();
+		Command cmd1 = getACommandMock();
+		Command cmd2 = getACommandMock();
 
 		when(coolDownStrategy.cool()).thenReturn(false);
 
@@ -157,10 +156,10 @@ public class CircuitBreakerTest {
 		ConnectException toBeThrown = new ConnectException();
 		when(triggerStrategy.isBreaker(toBeThrown)).thenReturn(true);
 
-		RegulatedCommand cmd = getACommandMock();
+		Command cmd = getACommandMock();
 		when(cmd.execute()).thenThrow(toBeThrown);
-		RegulatedCommand cmd1 = getACommandMock();
-		RegulatedCommand cmd2 = getACommandMock();
+		Command cmd1 = getACommandMock();
+		Command cmd2 = getACommandMock();
 
 		Assert.assertTrue(cb.execute(cmd1).success());
 		Assert.assertFalse(cb.execute(cmd).success());
@@ -170,8 +169,8 @@ public class CircuitBreakerTest {
 
 	}
 
-	private RegulatedCommand getACommandMock() {
-		return mock(RegulatedCommand.class);
+	private Command getACommandMock() {
+		return mock(Command.class);
 	}
 }
 

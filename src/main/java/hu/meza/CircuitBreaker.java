@@ -1,6 +1,5 @@
 package hu.meza;
 
-import hu.meza.cooldownstrategies.CoolDownStrategy;
 import hu.meza.exceptions.CircuitBrokenException;
 
 public class CircuitBreaker {
@@ -17,7 +16,7 @@ public class CircuitBreaker {
 
 	private State currentState = State.OPEN;
 
-	public RegulatedResponse execute(RegulatedCommand cmd) {
+	public Response execute(Command cmd) {
 		if (coolDownStrategy.cool()) {
 			open();
 		}
@@ -28,17 +27,17 @@ public class CircuitBreaker {
 		currentState = State.OPEN;
 	}
 
-	private RegulatedResponse handleCommand(RegulatedCommand regulatedCommand) {
+	private Response handleCommand(Command command) {
 
 		if (currentState == State.CLOSED) {
-			return new RegulatedResponse(null, false, new CircuitBrokenException());
+			return new Response(null, false, new CircuitBrokenException());
 		}
 
 		try {
-			return new RegulatedResponse(regulatedCommand.execute(), true);
+			return new Response(command.execute(), true);
 		} catch (Throwable e) {
 			handleException(e);
-			return new RegulatedResponse(null, false, e);
+			return new Response(null, false, e);
 		}
 
 	}

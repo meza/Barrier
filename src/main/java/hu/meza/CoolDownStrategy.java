@@ -1,4 +1,4 @@
-package hu.meza.cooldownstrategies;
+package hu.meza;
 
 public interface CoolDownStrategy {
 	public boolean cool();
