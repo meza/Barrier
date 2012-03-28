@@ -1,0 +1,21 @@
+Circuit Breaker
+
+In order to avoid the domino effect which can be caused when a service zou integrate with fails.
+A circuit breaker can block all outgoing connection until the fuse is hot to allow the subsystem to regain
+functionality.
+
+As an example, you may want to integrate layerA with layerB over HTTP.
+Let's say layerA calls layerB's web-services. When an error happens with layerB,
+and the first request times out, the circuit breaker gets notified about the error and if the TriggerStrategy says
+so, it becomes hot.
+In hot state, all following calls from layerA will be prevented from ever leaving the layer with a
+CircuitBrokenException. If the configured CoolDownStrategy thinks it is safe, the CircuitBreaker will let connections
+ through.
+
+In the example, the CoolDownStartegy waits 5 seconds before becoming cool, and the TriggerStrategy reacts only to
+runtime exceptions.
+
+To use the CircuitBreaker, you have to configure a CoolDownStrategy and a TriggerStrategy.
+You have to wrap your operation in a Command object.
+The execution() method of the CircuitBreaker will return a Response object with the result of the Command's execute
+method, the success of the execution, and the raised exception (if there's any)
