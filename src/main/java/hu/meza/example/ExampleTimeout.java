@@ -1,10 +1,12 @@
 package hu.meza.example;
 
+import hu.meza.CoolDownStrategy;
+
 class ExampleTimeout implements Runnable {
 
-	private ExampleCoolDownStrategy cs;
+	private CoolDownStrategy cs;
 
-	public ExampleTimeout(ExampleCoolDownStrategy cs) {
+	public ExampleTimeout(CoolDownStrategy cs) {
 		this.cs = cs;
 	}
 
@@ -12,9 +14,7 @@ class ExampleTimeout implements Runnable {
 	public void run() {
 		try {
 			Thread.sleep(5000);
-			cs.off();
-		} catch (InterruptedException e) {
-		}
+			cs.makeCold();
+		} catch (InterruptedException e) {}
 	}
-
 }

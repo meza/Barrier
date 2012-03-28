@@ -18,7 +18,7 @@ public class CircuitBreakerTest {
 	@Before
 	public void setUp() throws Exception {
 		coolDownStrategy = mock(CoolDownStrategy.class);
-		when(coolDownStrategy.cool()).thenReturn(false);
+		when(coolDownStrategy.isCool()).thenReturn(true);
 
 		triggerStrategy = mock(TriggerStrategy.class);
 		when(triggerStrategy.isBreaker(any(Throwable.class))).thenReturn(false);
@@ -106,6 +106,10 @@ public class CircuitBreakerTest {
 		Command cmd2 = getACommandMock();
 
 		Response resp = cb.execute(faultyCommand);
+		
+		verify(coolDownStrategy, times(1)).makeHot();
+		when(coolDownStrategy.isCool()).thenReturn(false);
+		
 		Response resp1 = cb.execute(cmd1);
 		Response resp2 = cb.execute(cmd2);
 
@@ -135,15 +139,17 @@ public class CircuitBreakerTest {
 		Command cmd1 = getACommandMock();
 		Command cmd2 = getACommandMock();
 
-		when(coolDownStrategy.cool()).thenReturn(false);
+		when(coolDownStrategy.isCool()).thenReturn(true);
 
 		cb.execute(faultyCommand);
-		verify(coolDownStrategy, times(1)).trigger();
+		verify(coolDownStrategy, times(1)).makeHot();
+
+		when(coolDownStrategy.isCool()).thenReturn(false);
 
 		Assert.assertFalse(cb.execute(cmd1).success());
 		Assert.assertFalse(cb.execute(cmd2).success());
 
-		when(coolDownStrategy.cool()).thenReturn(true);
+		when(coolDownStrategy.isCool()).thenReturn(true);
 
 		Assert.assertTrue(cb.execute(cmd1).success());
 		Assert.assertTrue(cb.execute(cmd2).success());
@@ -156,13 +162,18 @@ public class CircuitBreakerTest {
 		ConnectException toBeThrown = new ConnectException();
 		when(triggerStrategy.isBreaker(toBeThrown)).thenReturn(true);
 
-		Command cmd = getACommandMock();
-		when(cmd.execute()).thenThrow(toBeThrown);
+		Command faultyCommand = getACommandMock();
+		when(faultyCommand.execute()).thenThrow(toBeThrown);
+
 		Command cmd1 = getACommandMock();
 		Command cmd2 = getACommandMock();
 
 		Assert.assertTrue(cb.execute(cmd1).success());
-		Assert.assertFalse(cb.execute(cmd).success());
+		Assert.assertFalse(cb.execute(faultyCommand).success());
+
+		verify(coolDownStrategy, times(1)).makeHot();
+		when(coolDownStrategy.isCool()).thenReturn(false);
+
 		Assert.assertFalse(cb.execute(cmd2).success());
 
 		verify(triggerStrategy, times(1)).isBreaker(toBeThrown);
@@ -173,5 +184,3 @@ public class CircuitBreakerTest {
 		return mock(Command.class);
 	}
 }
-
-

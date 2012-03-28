@@ -13,12 +13,11 @@ public class CBExample {
 
 		CircuitBreaker cb = new CircuitBreaker(new ExampleCoolDownStrategy(), new ExampleTriggerStrategy());
 
-
-		while (true) {
-			th1 = new Thread(new TaskNode("A", cb));
-			th2 = new Thread(new TaskNode("B", cb));
-			th3 = new Thread(new TaskNode("C", cb));
-			th4 = new Thread(new TaskNode("D", cb));
+		 for (int i = 0; i < 10; i++) {
+			th1 = new Thread(new ExampleNetworkOperationPerformingTask("A", cb));
+			th2 = new Thread(new ExampleNetworkOperationPerformingTask("B", cb));
+			th3 = new Thread(new ExampleNetworkOperationPerformingTask("C", cb));
+			th4 = new Thread(new ExampleNetworkOperationPerformingTask("D", cb));
 
 			th1.start();
 			th2.start();
@@ -29,8 +28,6 @@ public class CBExample {
 			th2.join();
 			th3.join();
 			th4.join();
-
-			Thread.sleep(800);
 		}
 
 	}

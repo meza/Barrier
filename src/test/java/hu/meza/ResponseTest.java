@@ -9,9 +9,9 @@ public class ResponseTest {
 	public void testResult() throws Exception {
 		String retval = "xx";
 		Response response = new Response(retval);
+
 		Assert.assertTrue(response.success());
 		Assert.assertSame(retval, response.result());
-
 	}
 	
 	@Test
@@ -27,6 +27,7 @@ public class ResponseTest {
 	public void testException() throws Exception {
 		Exception e = new RuntimeException();
 		Response response = new Response(null, false, e);
+
 		Assert.assertSame(response.exception(), e);
 	}
 }

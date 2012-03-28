@@ -1,7 +1,9 @@
 package hu.meza;
 
 public interface CoolDownStrategy {
-	public boolean cool();
+	public boolean isCool();
 
-	public void trigger();
+	public void makeHot();
+
+	public void makeCold();
 }

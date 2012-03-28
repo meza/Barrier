@@ -6,21 +6,36 @@ import java.util.Random;
 
 class ExampleNetworkRequestCommand implements Command {
 
-	private String param;
+	private String parameter;
 
-	public ExampleNetworkRequestCommand(String parameter) {
-		param = parameter;
+	public ExampleNetworkRequestCommand(String argument) {
+		parameter = argument;
 	}
 
 	@Override
 	public Object execute() throws Throwable {
-		
-		Random random = new Random();
-		if (random.nextInt(100) > 90) {
+
+		if (shouldFail()) {
 			throw new RuntimeException();
 		}
-		System.out.println(param);
-		Thread.sleep(500);
+
+		simulateAction();
+
 		return null;
 	}
+
+	private void simulateAction() throws InterruptedException {
+		System.out.println(parameter);
+		Thread.sleep(500);
+	}
+
+	private boolean shouldFail() {
+		boolean fail = false;
+		Random random = new Random();
+		if (random.nextInt(100) > 90) {
+			fail = true;
+		}
+		return fail;
+	}
+
 }

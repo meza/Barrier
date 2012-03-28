@@ -12,24 +12,12 @@ public class CircuitBreaker {
 		this.triggerStrategy = triggerStrategy;
 	}
 
-	private enum State {OPEN, CLOSED}
-
-	private State currentState = State.OPEN;
-
 	public Response execute(Command cmd) {
-		if (coolDownStrategy.cool()) {
-			open();
-		}
 		return handleCommand(cmd);
 	}
 
-	private synchronized void open() {
-		currentState = State.OPEN;
-	}
-
 	private Response handleCommand(Command command) {
-
-		if (currentState == State.CLOSED) {
+		if (coolDownStrategy.isCool() == false) {
 			return new Response(null, false, new CircuitBrokenException());
 		}
 
@@ -39,14 +27,13 @@ public class CircuitBreaker {
 			handleException(e);
 			return new Response(null, false, e);
 		}
-
 	}
 
-	private synchronized void handleException(Throwable e) {
-		if (triggerStrategy.isBreaker(e)) {
-			coolDownStrategy.trigger();
-			currentState = State.CLOSED;
+	private void handleException(Throwable e) {
+		if(coolDownStrategy.isCool() == false) {
+			if (triggerStrategy.isBreaker(e)) {
+				coolDownStrategy.makeHot();
+			}
 		}
 	}
 }
-
