@@ -9,10 +9,10 @@ Let's say layerA calls layerB's web-services. When an error happens with layerB,
 and the first request times out, the circuit breaker gets notified about the error and if the TriggerStrategy says
 so, it becomes hot.
 In hot state, all following calls from layerA will be prevented from ever leaving the layer with a
-CircuitBrokenException. If the configured CoolDownStrategy thinks it is safe, the CircuitBreaker will let connections
- through.
+CircuitBrokenException. If the configured CoolDownStrategy thinks it is safe, the CircuitBreaker will let connections 
+through.
 
-In the example, the CoolDownStartegy waits 5 seconds before becoming cool, and the TriggerStrategy reacts only to
+In the example, the CoolDownStartegy waits 5 seconds before becoming cool, and the TriggerStrategy reacts only to 
 runtime exceptions.
 
 To use the CircuitBreaker, you have to configure a CoolDownStrategy and a TriggerStrategy.
