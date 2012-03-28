@@ -22,7 +22,8 @@ public class CircuitBreaker {
 		}
 
 		try {
-			return new Response(command.execute(), true);
+			Object executionResult = command.execute();
+			return new Response(executionResult, true);
 		} catch (Throwable e) {
 			handleException(e);
 			return new Response(null, false, e);
