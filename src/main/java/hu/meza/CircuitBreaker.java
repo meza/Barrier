@@ -30,7 +30,7 @@ public class CircuitBreaker {
 	}
 
 	private void handleException(Throwable e) {
-		if(coolDownStrategy.isCool() == false) {
+		if(coolDownStrategy.isCool() == true) {
 			if (triggerStrategy.isBreaker(e)) {
 				coolDownStrategy.makeHot();
 			}
