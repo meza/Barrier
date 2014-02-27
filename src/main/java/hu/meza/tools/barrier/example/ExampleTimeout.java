@@ -1,6 +1,6 @@
-package hu.meza.example;
+package hu.meza.tools.barrier.example;
 
-import hu.meza.CoolDownStrategy;
+import hu.meza.tools.barrier.CoolDownStrategy;
 
 class ExampleTimeout implements Runnable {
 
@@ -15,6 +15,8 @@ class ExampleTimeout implements Runnable {
 		try {
 			Thread.sleep(5000);
 			cs.makeCold();
-		} catch (InterruptedException e) {}
+		} catch (InterruptedException e) {
+			// do something
+		}
 	}
 }

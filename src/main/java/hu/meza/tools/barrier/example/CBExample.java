@@ -1,9 +1,11 @@
-package hu.meza.example;
+package hu.meza.tools.barrier.example;
 
-import hu.meza.CircuitBreaker;
+import hu.meza.tools.barrier.CircuitBreaker;
 
-public class CBExample {
+public final class CBExample {
 
+	private CBExample() {
+	}
 
 	public static void main(String[] args) throws InterruptedException {
 		Thread th1;
@@ -13,7 +15,7 @@ public class CBExample {
 
 		CircuitBreaker cb = new CircuitBreaker(new ExampleCoolDownStrategy(), new ExampleTriggerStrategy());
 
-		 for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; i++) {
 			th1 = new Thread(new ExampleNetworkOperationPerformingTask("A", cb));
 			th2 = new Thread(new ExampleNetworkOperationPerformingTask("B", cb));
 			th3 = new Thread(new ExampleNetworkOperationPerformingTask("C", cb));

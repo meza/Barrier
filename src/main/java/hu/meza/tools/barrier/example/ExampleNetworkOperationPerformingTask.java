@@ -1,13 +1,13 @@
-package hu.meza.example;
+package hu.meza.tools.barrier.example;
 
-import hu.meza.CircuitBreaker;
-import hu.meza.Command;
-import hu.meza.Response;
+import hu.meza.tools.barrier.CircuitBreaker;
+import hu.meza.tools.barrier.Command;
+import hu.meza.tools.barrier.Response;
 
 class ExampleNetworkOperationPerformingTask implements Runnable {
 
-	CircuitBreaker circuitBreaker;
-	String prefix;
+	private CircuitBreaker circuitBreaker;
+	private String prefix;
 
 	public ExampleNetworkOperationPerformingTask(String prefix, CircuitBreaker circuitBreaker) {
 		this.circuitBreaker = circuitBreaker;
@@ -34,9 +34,9 @@ class ExampleNetworkOperationPerformingTask implements Runnable {
 
 		String url = "Called: http://api.example.com/get_data?param=" + param + " with result: ";
 		if (rsp.success()) {
-			System.out.println(url+"200 OK");
+			System.out.println(url + "200 OK");
 		} else {
-			System.out.println(url+"Error: "+rsp.exception().getClass().getSimpleName());
+			System.out.println(url + "Error: " + rsp.exception().getClass().getSimpleName());
 		}
 	}
 }

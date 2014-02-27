@@ -1,4 +1,4 @@
-package hu.meza;
+package hu.meza.tools.barrier;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,7 +13,7 @@ public class ResponseTest {
 		Assert.assertTrue(response.success());
 		Assert.assertSame(retval, response.result());
 	}
-	
+
 	@Test
 	public void testSuccess() throws Exception {
 		Response response = new Response(null, true);

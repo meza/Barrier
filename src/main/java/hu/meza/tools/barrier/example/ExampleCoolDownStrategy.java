@@ -1,6 +1,6 @@
-package hu.meza.example;
+package hu.meza.tools.barrier.example;
 
-import hu.meza.CoolDownStrategy;
+import hu.meza.tools.barrier.CoolDownStrategy;
 
 class ExampleCoolDownStrategy implements CoolDownStrategy {
 
@@ -19,7 +19,7 @@ class ExampleCoolDownStrategy implements CoolDownStrategy {
 			new Thread(new ExampleTimeout(this)).start();
 		}
 	}
-	
+
 	public synchronized void makeCold() {
 		System.err.println("Circuit on");
 		cool = true;

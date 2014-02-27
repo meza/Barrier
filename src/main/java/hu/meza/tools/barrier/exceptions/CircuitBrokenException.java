@@ -1,4 +1,4 @@
-package hu.meza.exceptions;
+package hu.meza.tools.barrier.exceptions;
 
 public class CircuitBrokenException extends Exception {
 }

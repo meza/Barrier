@@ -1,6 +1,6 @@
-package hu.meza.example;
+package hu.meza.tools.barrier.example;
 
-import hu.meza.TriggerStrategy;
+import hu.meza.tools.barrier.TriggerStrategy;
 
 class ExampleTriggerStrategy implements TriggerStrategy {
 	@Override

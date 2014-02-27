@@ -1,6 +1,6 @@
-package hu.meza.example;
+package hu.meza.tools.barrier.example;
 
-import hu.meza.Command;
+import hu.meza.tools.barrier.Command;
 
 import java.util.Random;
 

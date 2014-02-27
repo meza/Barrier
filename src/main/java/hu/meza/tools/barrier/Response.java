@@ -1,7 +1,7 @@
-package hu.meza;
+package hu.meza.tools.barrier;
 
 public class Response {
-	private boolean success = false;
+	private boolean success;
 	private Throwable error;
 	private Object result;
 

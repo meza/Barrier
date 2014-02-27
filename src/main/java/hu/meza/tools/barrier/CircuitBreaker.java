@@ -1,6 +1,7 @@
-package hu.meza;
+package hu.meza.tools.barrier;
 
-import hu.meza.exceptions.CircuitBrokenException;
+
+import hu.meza.tools.barrier.exceptions.CircuitBrokenException;
 
 public class CircuitBreaker {
 
@@ -17,7 +18,7 @@ public class CircuitBreaker {
 	}
 
 	private Response handleCommand(Command command) {
-		if (coolDownStrategy.isCool() == false) {
+		if (!coolDownStrategy.isCool()) {
 			return new Response(null, false, new CircuitBrokenException());
 		}
 
@@ -31,7 +32,7 @@ public class CircuitBreaker {
 	}
 
 	private void handleException(Throwable e) {
-		if(coolDownStrategy.isCool() == true) {
+		if (coolDownStrategy.isCool()) {
 			if (triggerStrategy.isBreaker(e)) {
 				coolDownStrategy.makeHot();
 			}

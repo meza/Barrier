@@ -1,13 +1,19 @@
-package hu.meza;
+package hu.meza.tools.barrier;
 
-import hu.meza.exceptions.CircuitBrokenException;
+
+import hu.meza.tools.barrier.exceptions.CircuitBrokenException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.net.ConnectException;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class CircuitBreakerTest {
 
@@ -106,10 +112,10 @@ public class CircuitBreakerTest {
 		Command cmd2 = getACommandMock();
 
 		Response resp = cb.execute(faultyCommand);
-		
+
 		verify(coolDownStrategy, times(1)).makeHot();
 		when(coolDownStrategy.isCool()).thenReturn(false);
-		
+
 		Response resp1 = cb.execute(cmd1);
 		Response resp2 = cb.execute(cmd2);
 
