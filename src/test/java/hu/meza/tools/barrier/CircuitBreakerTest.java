@@ -5,6 +5,7 @@ import hu.meza.tools.barrier.exceptions.CircuitBrokenException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.net.ConnectException;
 
@@ -184,6 +185,30 @@ public class CircuitBreakerTest {
 
 		verify(triggerStrategy, times(1)).isBreaker(toBeThrown);
 
+	}
+
+	@Test
+	public void listeners() throws Throwable {
+		CircuitMonitor listener = Mockito.mock(CircuitMonitor.class);
+
+		ConnectException toBeThrown = new ConnectException();
+		when(triggerStrategy.isBreaker(toBeThrown)).thenReturn(true);
+
+		Command faultyCommand = getACommandMock();
+		when(faultyCommand.execute()).thenThrow(toBeThrown);
+
+		cb.addListener(listener);
+
+		cb.execute(faultyCommand);
+
+		verify(listener, Mockito.atLeastOnce()).circuitBroken();
+
+		CircuitMonitor listener2 = Mockito.mock(CircuitMonitor.class);
+		cb.addListener(listener2);
+		cb.removeListener(listener2);
+		cb.execute(faultyCommand);
+
+		verify(listener2, Mockito.never()).circuitBroken();
 	}
 
 	private Command getACommandMock() {
