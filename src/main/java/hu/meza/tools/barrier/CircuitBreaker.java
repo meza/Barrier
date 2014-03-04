@@ -5,11 +5,16 @@ import hu.meza.tools.barrier.exceptions.CircuitBrokenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class CircuitBreaker {
 
 	private CoolDownStrategy coolDownStrategy;
 	private TriggerStrategy triggerStrategy;
 	private Logger logger = LoggerFactory.getLogger(CircuitBreaker.class);
+	private Set<CircuitMonitor> listeners = new HashSet<CircuitMonitor>() {
+	};
 
 	public CircuitBreaker(CoolDownStrategy secondsToCoolDown, TriggerStrategy triggerStrategy) {
 		this.coolDownStrategy = secondsToCoolDown;
@@ -18,6 +23,16 @@ public class CircuitBreaker {
 
 	public Response execute(Command cmd) {
 		return handleCommand(cmd);
+	}
+
+	public void addListener(CircuitMonitor listener) {
+		listeners.add(listener);
+	}
+
+	public void removeListener(CircuitMonitor listener) {
+		if (listeners.contains(listener)) {
+			listeners.remove(listener);
+		}
 	}
 
 	private Response handleCommand(Command command) {
@@ -43,6 +58,9 @@ public class CircuitBreaker {
 			if (triggerStrategy.isBreaker(e)) {
 				logger.debug("Breaking circuit");
 				coolDownStrategy.makeHot();
+				for (CircuitMonitor listener : listeners) {
+					listener.circuitBroken();
+				}
 			} else {
 				logger.debug("Not breaking circuit");
 			}
