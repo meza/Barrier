@@ -188,6 +188,17 @@ public class CircuitBreakerTest {
 	}
 
 	@Test
+	public void isBroken() throws Throwable {
+
+		when(coolDownStrategy.isCool()).thenReturn(true);
+		Assert.assertFalse("Circuit breaker does not report non broken state correctly", cb.isBroken());
+
+		when(coolDownStrategy.isCool()).thenReturn(false);
+		Assert.assertTrue("Circuit breaker does not report broken state correctly", cb.isBroken());
+
+	}
+
+	@Test
 	public void listeners() throws Throwable {
 		CircuitMonitor listener = Mockito.mock(CircuitMonitor.class);
 

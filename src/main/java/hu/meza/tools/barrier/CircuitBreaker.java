@@ -35,6 +35,10 @@ public class CircuitBreaker {
 		}
 	}
 
+	public boolean isBroken() {
+		return !coolDownStrategy.isCool();
+	}
+
 	private Response handleCommand(Command command) {
 		logger.debug(String.format("Attemting to perform task %s", command.getClass().getCanonicalName()));
 		if (!coolDownStrategy.isCool()) {
